@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+build/
+gradle/
+*.iml
+*.properties
+gradlew
+*.bat
+settings.tradle
+app/build/
