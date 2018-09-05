@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import moe.atalanta.accounts.MyApplication;
 import moe.atalanta.accounts.entity.DaoSession;
 
 /**
@@ -15,38 +16,38 @@ import moe.atalanta.accounts.entity.DaoSession;
 
 public class BaseActivity extends AppCompatActivity {
 
-    protected String TAG = getClass().getSimpleName();
+	protected String TAG = getClass().getSimpleName();
 
-    protected Context getContext(){
-        return this;
-    }
+	protected Context getContext() {
+		return this;
+	}
 
-    protected DaoSession getDaoSession(){
-        return MyApplication.getInstance().getDaoSession();
-    }
+	protected DaoSession getDaoSession() {
+		return MyApplication.getInstance().getDaoSession();
+	}
 
-    protected void makeText(Object msg){
-        Toast.makeText(getContext(), String.valueOf(msg), Toast.LENGTH_SHORT).show();
-    }
+	protected void makeText(Object msg) {
+		Toast.makeText(getContext(), String.valueOf(msg), Toast.LENGTH_SHORT).show();
+	}
 
-    protected void finishDelay(long delay){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, delay);
-    }
+	protected void finishDelay(long delay) {
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				finish();
+			}
+		}, delay);
+	}
 
-    protected void startActivity(Class<?> cls){
-        Intent intent = new Intent(getContext(), cls);
-        startActivity(intent);
-    }
+	protected void startActivity(Class<?> cls) {
+		Intent intent = new Intent(getContext(), cls);
+		startActivity(intent);
+	}
 
-    protected void startActivity(Class<?> cls, Bundle bundle){
-        Intent intent = new Intent(getContext(), cls);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
+	protected void startActivity(Class<?> cls, Bundle bundle) {
+		Intent intent = new Intent(getContext(), cls);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
 
 }

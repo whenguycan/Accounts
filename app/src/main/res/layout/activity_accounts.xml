@@ -30,9 +30,16 @@
                 android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/btn_import"
+                android:id="@+id/btn_recover"
                 android:layout_marginLeft="8dp"
                 android:text="恢复"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_import"
+                android:layout_marginLeft="8dp"
+                android:text="导入"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

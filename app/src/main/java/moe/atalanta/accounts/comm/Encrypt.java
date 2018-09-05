@@ -13,51 +13,53 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * 
  * @author wangchenyu
- * 2016-11-16
+ *         2016-11-16
  */
 public class Encrypt {
-	
+
 	private static final String ENCRYPT_ALGORITHM = "AES";
 	private static final int ENCRYPT_KEY_LEN = 128;
 	private static final String CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
-	
+
 	/**
 	 * byte数组转16进制字符串
+	 *
 	 * @param bytes
 	 * @return
 	 */
-	private static String bytes2Hex(byte[] bytes){
+	private static String bytes2Hex(byte[] bytes) {
 		StringBuilder hex = new StringBuilder();
-		for(byte b : bytes){
+		for (byte b : bytes) {
 			String h = Integer.toHexString(b);
-			if(b > 0 && b < 16){
+			if (b > 0 && b < 16) {
 				hex.append("0");
 			}
-			hex.append(h.length()==8?h.substring(6):h);
+			hex.append(h.length() == 8 ? h.substring(6) : h);
 		}
 		return hex.toString();
 	}
-	
+
 	/**
 	 * 16进制字符串转byte数组
+	 *
 	 * @param hex
 	 * @return
 	 */
-	private static byte[] hex2Bytes(String hex){
-		byte[] bytes = new byte[hex.length()/2];
-		for(int i=0, len=bytes.length; i<len; i++){
-			bytes[i] = (byte)Integer.parseInt(hex.substring(i*2, i*2+2), 16);
+	private static byte[] hex2Bytes(String hex) {
+		byte[] bytes = new byte[hex.length() / 2];
+		for (int i = 0, len = bytes.length; i < len; i++) {
+			bytes[i] = (byte) Integer.parseInt(hex.substring(i * 2, i * 2 + 2), 16);
 		}
 		return bytes;
 	}
-	
+
 	/**
 	 * 随机生成密钥
+	 *
 	 * @return
 	 */
-	private static byte[] generateSecretKey(String encrypt_algorithm, int encrypt_key_len){
+	private static byte[] generateSecretKey(String encrypt_algorithm, int encrypt_key_len) {
 		try {
 			KeyGenerator kgen = KeyGenerator.getInstance(encrypt_algorithm);
 			kgen.init(encrypt_key_len);
@@ -67,14 +69,15 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 加密
+	 *
 	 * @param password
 	 * @param secretKey
 	 * @return
 	 */
-	private static String encrypt(String password, String secretKey){
+	private static String encrypt(String password, String secretKey) {
 		byte[] passwordBytes = password.getBytes();
 		byte[] secretKeyBytes = hex2Bytes(secretKey);
 		try {
@@ -87,14 +90,15 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 解密
+	 *
 	 * @param encryptedPassword
 	 * @param secretKey
 	 * @return
 	 */
-	private static String decrypt(String encryptedPassword, String secretKey){
+	private static String decrypt(String encryptedPassword, String secretKey) {
 		byte[] encryptedPasswordBytes = hex2Bytes(encryptedPassword);
 		byte[] secretKeyBytes = hex2Bytes(secretKey);
 		try {
@@ -107,38 +111,41 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 加密
+	 *
 	 * @param password
 	 * @return
 	 */
-	public static String encrypt(String password){
+	public static String encrypt(String password) {
 		byte[] secretKeyBytes = generateSecretKey(ENCRYPT_ALGORITHM, ENCRYPT_KEY_LEN);
 		String secretKey = bytes2Hex(secretKeyBytes);
 		String encryptedPassword = encrypt(password, secretKey);
 		//加密字符串拼接，注意，解密时获取密钥要参照这里
 		return secretKey + encryptedPassword;
 	}
-	
+
 	/**
 	 * 解密
+	 *
 	 * @param encryptedPassword
 	 * @return
 	 */
-	public static String decrypt(String encryptedPassword){
+	public static String decrypt(String encryptedPassword) {
 		int secretKeySize = ENCRYPT_KEY_LEN / 4;
 		String secretKey = encryptedPassword.substring(0, secretKeySize);
 		String encryptedPassword_ = encryptedPassword.substring(secretKeySize);
 		return decrypt(encryptedPassword_, secretKey);
 	}
-	
+
 	/**
 	 * md5
+	 *
 	 * @param text
 	 * @return
 	 */
-	public static String md5(String text){
+	public static String md5(String text) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(text.getBytes());
@@ -149,20 +156,19 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * 
 	 * @param file
 	 * @param ignore
 	 * @return
 	 */
-	public static String md5(File file, String... ignore){
+	public static String md5(File file, String... ignore) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String line = null;
-			while((line = reader.readLine()) != null){
-				for(String regex : ignore){
+			while ((line = reader.readLine()) != null) {
+				for (String regex : ignore) {
 					line = line.replaceAll(regex, "");
 				}
 				md.update(line.getBytes());
@@ -174,19 +180,20 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * md5
+	 *
 	 * @param file
 	 * @return
 	 */
-	public static String md5(File file){
+	public static String md5(File file) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			InputStream is = new FileInputStream(file);
 			byte[] buffer = new byte[256];
 			int len = -1;
-			while((len = is.read(buffer)) != -1){
+			while ((len = is.read(buffer)) != -1) {
 				md.update(buffer, 0, len);
 			}
 			is.close();
@@ -196,45 +203,52 @@ public class Encrypt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 密码验证
+	 *
 	 * @param password
 	 * @param passwordStored
 	 * @return
 	 */
-	public static boolean checkPassword(String password, String passwordStored){
+	public static boolean checkPassword(String password, String passwordStored) {
 		String salt = getSaltFromStoredPassword(passwordStored);
 		return passwordStored.equals(makePassword(salt, password));
 	}
-	
+
 	/**
 	 * 密码加密
+	 *
 	 * @param password
 	 * @return
 	 */
-	public static String encodePassword(String password){
+	public static String encodePassword(String password) {
 		String salt = generateSalt();
 		return makePassword(salt, password);
 	}
-	
-	private static String generateSalt(){
+
+	private static String generateSalt() {
 		return UUID.randomUUID().toString().replace("-", "").substring(0, 7);
 	}
-	private static String getSaltFromStoredPassword(String passwordStored){
+
+	private static String getSaltFromStoredPassword(String passwordStored) {
 		String p = passwordStored.substring(0, 2);
 		String s = passwordStored.substring(passwordStored.length() - 5);
 		return p + s;
 	}
-	private static String makePassword(String salt, String password){
+
+	private static String makePassword(String salt, String password) {
 		String p = salt.substring(0, 2);
 		String s = salt.substring(salt.length() - 5);
 		return p + md5(s + password + p) + s;
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		md5("C:\\Users\\Administrator\\Desktop\\65d874d1b634b311.jpg");
 		System.out.println("use : " + (System.currentTimeMillis() - start));
+		System.out.println(encrypt("0009"));
+		String x = "ac274bb7abca5d82c3e5eb2bb42d06560210ccbfe7d7296e6a22c7b1c58a3115";
+		System.out.println(decrypt(x));
 	}
 }

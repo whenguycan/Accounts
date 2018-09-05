@@ -27,7 +27,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         public final static Property Label = new Property(2, String.class, "label", false, "LABEL");
         public final static Property Username = new Property(3, String.class, "username", false, "USERNAME");
         public final static Property Password = new Property(4, String.class, "password", false, "PASSWORD");
-        public final static Property Using = new Property(5, int.class, "using", false, "USING");
+        public final static Property Remarks = new Property(5, String.class, "remarks", false, "REMARKS");
+        public final static Property Using = new Property(6, int.class, "using", false, "USING");
     }
 
 
@@ -48,7 +49,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
                 "\"LABEL\" TEXT," + // 2: label
                 "\"USERNAME\" TEXT," + // 3: username
                 "\"PASSWORD\" TEXT," + // 4: password
-                "\"USING\" INTEGER NOT NULL );"); // 5: using
+                "\"REMARKS\" TEXT," + // 5: remarks
+                "\"USING\" INTEGER NOT NULL );"); // 6: using
     }
 
     /** Drops the underlying database table. */
@@ -85,7 +87,12 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         if (password != null) {
             stmt.bindString(5, password);
         }
-        stmt.bindLong(6, entity.getUsing());
+ 
+        String remarks = entity.getRemarks();
+        if (remarks != null) {
+            stmt.bindString(6, remarks);
+        }
+        stmt.bindLong(7, entity.getUsing());
     }
 
     @Override
@@ -116,7 +123,12 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         if (password != null) {
             stmt.bindString(5, password);
         }
-        stmt.bindLong(6, entity.getUsing());
+ 
+        String remarks = entity.getRemarks();
+        if (remarks != null) {
+            stmt.bindString(6, remarks);
+        }
+        stmt.bindLong(7, entity.getUsing());
     }
 
     @Override
@@ -132,7 +144,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // label
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // username
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // password
-            cursor.getInt(offset + 5) // using
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // remarks
+            cursor.getInt(offset + 6) // using
         );
         return entity;
     }
@@ -144,7 +157,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         entity.setLabel(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setUsername(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setPassword(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setUsing(cursor.getInt(offset + 5));
+        entity.setRemarks(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setUsing(cursor.getInt(offset + 6));
      }
     
     @Override

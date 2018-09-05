@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="moe.atalanta.accounts.activity.AccountsEditActivity">
+    tools:context="moe.atalanta.accounts.activity.AccountsViewActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,6 +12,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -22,8 +23,8 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/et_edit_domain"
+            <TextView
+                android:id="@+id/tv_edit_domain"
                 android:ems="10"
                 android:layout_marginLeft="8dp"
                 android:layout_width="wrap_content"
@@ -42,10 +43,10 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/et_edit_label"
-                android:ems="10"
+            <TextView
+                android:id="@+id/tv_edit_label"
                 android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
 
@@ -62,10 +63,10 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/et_edit_username"
-                android:ems="10"
+            <TextView
+                android:id="@+id/tv_edit_username"
                 android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
 
@@ -82,10 +83,10 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/et_edit_password"
-                android:ems="10"
+            <TextView
+                android:id="@+id/tv_edit_password"
                 android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
 
@@ -102,10 +103,10 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/et_edit_remarks"
-                android:ems="10"
+            <TextView
+                android:id="@+id/tv_edit_remarks"
                 android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
 
@@ -117,8 +118,8 @@
             android:layout_gravity="center">
 
             <Button
-                android:id="@+id/btn_save"
-                android:text="保存"
+                android:id="@+id/btn_edit"
+                android:text="编辑"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

@@ -8,12 +8,12 @@ import java.util.List;
 
 public class ListUtils {
 
-    public static boolean isBlank(List<?> list){
-        return list == null || list.isEmpty();
-    }
+	public static boolean isBlank(List<?> list) {
+		return list == null || list.isEmpty();
+	}
 
-    public static boolean isNotBlank(List<?> list){
-        return !isBlank(list);
-    }
+	public static boolean isNotBlank(List<?> list) {
+		return !isBlank(list);
+	}
 
 }

@@ -24,16 +24,19 @@ public class Accounts implements Serializable {
 
     private String password;
 
+    private String remarks;
+
     private int using;
 
-    @Generated(hash = 247198877)
+    @Generated(hash = 991955428)
     public Accounts(Long id, String domain, String label, String username,
-            String password, int using) {
+            String password, String remarks, int using) {
         this.id = id;
         this.domain = domain;
         this.label = label;
         this.username = username;
         this.password = password;
+        this.remarks = remarks;
         this.using = using;
     }
 
@@ -87,6 +90,14 @@ public class Accounts implements Serializable {
 
     public void setUsing(int using) {
         this.using = using;
+    }
+
+    public String getRemarks() {
+        return this.remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
 }
