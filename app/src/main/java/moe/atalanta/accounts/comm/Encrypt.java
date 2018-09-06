@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.UUID;
 
@@ -78,7 +79,7 @@ public class Encrypt {
 	 * @return
 	 */
 	private static String encrypt(String password, String secretKey) {
-		byte[] passwordBytes = password.getBytes();
+		byte[] passwordBytes = password.getBytes(Charset.defaultCharset());
 		byte[] secretKeyBytes = hex2Bytes(secretKey);
 		try {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -105,7 +106,7 @@ public class Encrypt {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secretKeyBytes, ENCRYPT_ALGORITHM));
 			byte[] passwordBytes = cipher.doFinal(encryptedPasswordBytes);
-			return new String(passwordBytes);
+			return new String(passwordBytes, Charset.defaultCharset());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,7 +149,7 @@ public class Encrypt {
 	public static String md5(String text) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(text.getBytes());
+			md.update(text.getBytes(Charset.defaultCharset()));
 			byte[] bytes = md.digest();
 			return bytes2Hex(bytes);
 		} catch (Exception e) {
@@ -171,7 +172,7 @@ public class Encrypt {
 				for (String regex : ignore) {
 					line = line.replaceAll(regex, "");
 				}
-				md.update(line.getBytes());
+				md.update(line.getBytes(Charset.defaultCharset()));
 			}
 			reader.close();
 			return bytes2Hex(md.digest());
@@ -244,11 +245,11 @@ public class Encrypt {
 	}
 
 	public static void main(String[] args) {
-		long start = System.currentTimeMillis();
-		md5("C:\\Users\\Administrator\\Desktop\\65d874d1b634b311.jpg");
-		System.out.println("use : " + (System.currentTimeMillis() - start));
-		System.out.println(encrypt("0009"));
-		String x = "ac274bb7abca5d82c3e5eb2bb42d06560210ccbfe7d7296e6a22c7b1c58a3115";
-		System.out.println(decrypt(x));
+		String x = "aaabbb";
+		System.out.println("x: " + x);
+		String y = encrypt(x);
+		System.out.println("y: " + y);
+		String z = decrypt(y);
+		System.out.println("z: " + z);
 	}
 }

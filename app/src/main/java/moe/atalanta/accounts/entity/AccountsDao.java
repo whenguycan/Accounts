@@ -28,7 +28,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         public final static Property Username = new Property(3, String.class, "username", false, "USERNAME");
         public final static Property Password = new Property(4, String.class, "password", false, "PASSWORD");
         public final static Property Remarks = new Property(5, String.class, "remarks", false, "REMARKS");
-        public final static Property Using = new Property(6, int.class, "using", false, "USING");
+        public final static Property OnUse = new Property(6, int.class, "onUse", false, "ON_USE");
     }
 
 
@@ -50,7 +50,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
                 "\"USERNAME\" TEXT," + // 3: username
                 "\"PASSWORD\" TEXT," + // 4: password
                 "\"REMARKS\" TEXT," + // 5: remarks
-                "\"USING\" INTEGER NOT NULL );"); // 6: using
+                "\"ON_USE\" INTEGER NOT NULL );"); // 6: onUse
     }
 
     /** Drops the underlying database table. */
@@ -92,7 +92,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         if (remarks != null) {
             stmt.bindString(6, remarks);
         }
-        stmt.bindLong(7, entity.getUsing());
+        stmt.bindLong(7, entity.getOnUse());
     }
 
     @Override
@@ -128,7 +128,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         if (remarks != null) {
             stmt.bindString(6, remarks);
         }
-        stmt.bindLong(7, entity.getUsing());
+        stmt.bindLong(7, entity.getOnUse());
     }
 
     @Override
@@ -145,7 +145,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // username
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // password
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // remarks
-            cursor.getInt(offset + 6) // using
+            cursor.getInt(offset + 6) // onUse
         );
         return entity;
     }
@@ -158,7 +158,7 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         entity.setUsername(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setPassword(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setRemarks(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setUsing(cursor.getInt(offset + 6));
+        entity.setOnUse(cursor.getInt(offset + 6));
      }
     
     @Override

@@ -2,13 +2,11 @@ package moe.atalanta.accounts.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -23,7 +21,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +34,7 @@ import moe.atalanta.accounts.comm.Encrypt;
 import moe.atalanta.accounts.comm.MessageEvent;
 import moe.atalanta.accounts.entity.Accounts;
 import moe.atalanta.accounts.entity.AccountsDao;
+import moe.atalanta.accounts.entity.EntityBuilder;
 
 public class AccountsActivity extends BaseActivity {
 
@@ -69,12 +70,13 @@ public class AccountsActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				backup();
+				makeText("备份成功");
 			}
 		});
 		btnRecover.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				recover();
+				startActivity(AccountsRecoverActivity.class);
 			}
 		});
 		btnImport.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +94,7 @@ public class AccountsActivity extends BaseActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								import1();
+								makeText("导入成功");
 								reloadListView();
 							}
 						})
@@ -102,7 +105,24 @@ public class AccountsActivity extends BaseActivity {
 		btnSync.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sync();
+				new AlertDialog.Builder(getContext())
+						.setTitle("确定同步数据吗？")
+						.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+
+							}
+						})
+						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								sync();
+								makeText("同步成功");
+								reloadListView();
+							}
+						})
+						.create()
+						.show();
 			}
 		});
 
@@ -164,7 +184,9 @@ public class AccountsActivity extends BaseActivity {
 								.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										getDaoSession().getAccountsDao().deleteByKey(a.getId());
+										Accounts origin = getDaoSession().getAccountsDao().load(a.getId());
+										origin.setOnUse(Accounts.ON_USE_NO);
+										getDaoSession().getAccountsDao().update(origin);
 										makeText("删除成功");
 										reloadListView();
 									}
@@ -182,27 +204,49 @@ public class AccountsActivity extends BaseActivity {
 	private List<Accounts> queryList() {
 		AccountsDao dao = getDaoSession().getAccountsDao();
 		if (sv.getQuery().length() != 0) {
-			return dao.queryBuilder().where(AccountsDao.Properties.Domain.like(sv.getQuery() + "%")).orderAsc(AccountsDao.Properties.Id).list();
+			return dao.queryBuilder()
+					.where(AccountsDao.Properties.Domain.like(sv.getQuery() + "%"), AccountsDao.Properties.OnUse.eq(Accounts.ON_USE_YES))
+					.orderAsc(AccountsDao.Properties.Id)
+					.list();
 		}
-		return dao.loadAll();
-	}
-
-	private void recover() {
-
+		return dao.queryBuilder()
+				.where(AccountsDao.Properties.OnUse.eq(Accounts.ON_USE_YES))
+				.orderAsc(AccountsDao.Properties.Id)
+				.list();
 	}
 
 	private void backup() {
-
+		File file = new File(Comm.MY_FILES_DIR, "backup" + System.currentTimeMillis() + ".txt");
+		try {
+			List<Accounts> list = getDaoSession().getAccountsDao().queryBuilder().where(AccountsDao.Properties.OnUse.eq(Accounts.ON_USE_YES)).list();
+			if(list != null && !list.isEmpty()){
+				OutputStream os = new FileOutputStream(file);
+				for(Accounts a : list){
+					String domain = a.getDomain() != null ? a.getDomain() : "";
+					String label = a.getLabel() != null ? a.getLabel() : "";
+					String username = a.getUsername() != null ? a.getUsername() : "";
+					String password = a.getPassword() != null ? a.getPassword() : "";
+					String remarks = a.getRemarks() != null ? a.getRemarks() : "";
+					String line = domain + Comm.ACCOUNTS_LINK_SEPARATOR + label + Comm.ACCOUNTS_LINK_SEPARATOR + username + Comm.ACCOUNTS_LINK_SEPARATOR + password + Comm.ACCOUNTS_LINK_SEPARATOR + remarks;
+					String encryptLine = Encrypt.encrypt(line) + Comm.CRLF;
+					os.write(encryptLine.getBytes());
+				}
+				os.flush();
+				os.close();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private void import1() {
-		File file = new File(getMyFilesDir(), "import.txt");
+		File file = new File(Comm.MY_FILES_DIR, "import.txt");
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			List<Accounts> list = new ArrayList<>();
 			String line;
 			while ((line = reader.readLine()) != null) {
-				list.add(getAccountsFromStringArray(line.split("/")));
+				list.add(EntityBuilder.getAccountsFromStringArray(line.split(Comm.ACCOUNTS_LINK_SEPARATOR)));
 			}
 			getDaoSession().getAccountsDao().saveInTx(list);
 		} catch (Exception e) {
@@ -210,31 +254,8 @@ public class AccountsActivity extends BaseActivity {
 		}
 	}
 
-	private Accounts getAccountsFromStringArray(String[] arr) {
-		if (arr == null || arr.length == 0)
-			return null;
-		Accounts a = new Accounts();
-		if (arr.length > 0)
-			a.setDomain(arr[0]);
-		if (arr.length > 1)
-			a.setLabel(arr[1]);
-		if (arr.length > 2)
-			a.setUsername(arr[2]);
-		if (arr.length > 3)
-			a.setPassword(Encrypt.encrypt(arr[3]));
-		if (arr.length > 4)
-			a.setRemarks(arr[4]);
-		Log.e(TAG, "getAccountsFromStringArray: " + Encrypt.encrypt(arr[3]));
-		return a;
-	}
-
 	private void sync() {
 
-	}
-
-	private String getMyFilesDir() {
-		File root = Environment.getExternalStorageDirectory();
-		return root.getAbsolutePath() + File.separator + "Tencent" + File.separator + "QQfile_recv";
 	}
 
 	@Override

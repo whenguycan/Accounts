@@ -22,7 +22,8 @@
         </activity>
         <activity android:name=".activity.AccountsActivity" />
         <activity android:name=".activity.AccountsEditActivity" />
-        <activity android:name=".activity.AccountsViewActivity"></activity>
+        <activity android:name=".activity.AccountsViewActivity" />
+        <activity android:name=".activity.AccountsRecoverActivity"></activity>
     </application>
 
 </manifest>

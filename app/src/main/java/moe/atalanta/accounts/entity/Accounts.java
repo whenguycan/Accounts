@@ -13,6 +13,9 @@ import java.io.Serializable;
 public class Accounts implements Serializable {
     private static final long serialVersionUID = 5615762862726648146L;
 
+    public static final int ON_USE_YES = 0;
+    public static final int ON_USE_NO = 1;
+
     @Id
     private Long id;
 
@@ -26,18 +29,18 @@ public class Accounts implements Serializable {
 
     private String remarks;
 
-    private int using;
+    private int onUse;
 
-    @Generated(hash = 991955428)
+    @Generated(hash = 1624730308)
     public Accounts(Long id, String domain, String label, String username,
-            String password, String remarks, int using) {
+            String password, String remarks, int onUse) {
         this.id = id;
         this.domain = domain;
         this.label = label;
         this.username = username;
         this.password = password;
         this.remarks = remarks;
-        this.using = using;
+        this.onUse = onUse;
     }
 
     @Generated(hash = 1756363702)
@@ -84,20 +87,20 @@ public class Accounts implements Serializable {
         this.label = label;
     }
 
-    public int getUsing() {
-        return this.using;
-    }
-
-    public void setUsing(int using) {
-        this.using = using;
-    }
-
     public String getRemarks() {
         return this.remarks;
     }
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public int getOnUse() {
+        return this.onUse;
+    }
+
+    public void setOnUse(int onUse) {
+        this.onUse = onUse;
     }
 
 }

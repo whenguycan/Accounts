@@ -17,6 +17,7 @@ import java.util.List;
 
 import moe.atalanta.accounts.activity.AccountsActivity;
 import moe.atalanta.accounts.comm.BaseActivity;
+import moe.atalanta.accounts.comm.Comm;
 import moe.atalanta.accounts.comm.Encrypt;
 import moe.atalanta.accounts.comm.ListUtils;
 import moe.atalanta.accounts.comm.StringUtils;
@@ -61,6 +62,20 @@ public class MainActivity extends BaseActivity {
 				finish();
 			}
 		});
+	}
+
+	private void addTestFile(){
+		File file = new File(Comm.MY_FILES_DIR, "import.txt");
+		try {
+			OutputStream os = new FileOutputStream(file);
+			os.write("http://atalanta.com=ddd=whenguycan=123=xxx=ddd".getBytes());
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initUsers() {
