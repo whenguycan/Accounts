@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -21,17 +22,15 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import moe.atalanta.accounts.R;
 import moe.atalanta.accounts.comm.BaseActivity;
 import moe.atalanta.accounts.comm.Comm;
-import moe.atalanta.accounts.comm.Encrypt;
 import moe.atalanta.accounts.comm.MessageEvent;
+import moe.atalanta.accounts.comm.ObjectSerializer;
 import moe.atalanta.accounts.entity.Accounts;
 import moe.atalanta.accounts.entity.AccountsDao;
 import moe.atalanta.accounts.entity.EntityBuilder;
@@ -106,21 +105,7 @@ public class AccountsActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				new AlertDialog.Builder(getContext())
-						.setTitle("确定同步数据吗？")
-						.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-
-							}
-						})
-						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								sync();
-								makeText("同步成功");
-								reloadListView();
-							}
-						})
+						.setTitle("功能未确定")
 						.create()
 						.show();
 			}
@@ -220,19 +205,9 @@ public class AccountsActivity extends BaseActivity {
 		try {
 			List<Accounts> list = getDaoSession().getAccountsDao().queryBuilder().where(AccountsDao.Properties.OnUse.eq(Accounts.ON_USE_YES)).list();
 			if(list != null && !list.isEmpty()){
-				OutputStream os = new FileOutputStream(file);
-				for(Accounts a : list){
-					String domain = a.getDomain() != null ? a.getDomain() : "";
-					String label = a.getLabel() != null ? a.getLabel() : "";
-					String username = a.getUsername() != null ? a.getUsername() : "";
-					String password = a.getPassword() != null ? a.getPassword() : "";
-					String remarks = a.getRemarks() != null ? a.getRemarks() : "";
-					String line = domain + Comm.ACCOUNTS_LINK_SEPARATOR + label + Comm.ACCOUNTS_LINK_SEPARATOR + username + Comm.ACCOUNTS_LINK_SEPARATOR + password + Comm.ACCOUNTS_LINK_SEPARATOR + remarks;
-					String encryptLine = Encrypt.encrypt(line) + Comm.CRLF;
-					os.write(encryptLine.getBytes());
-				}
-				os.flush();
-				os.close();
+				ObjectSerializer.write(file, list);
+			}else{
+				Log.e(TAG, "backup: serialize failed, list is empty");
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -246,9 +221,11 @@ public class AccountsActivity extends BaseActivity {
 			List<Accounts> list = new ArrayList<>();
 			String line;
 			while ((line = reader.readLine()) != null) {
-				list.add(EntityBuilder.getAccountsFromStringArray(line.split(Comm.ACCOUNTS_LINK_SEPARATOR)));
+				line = line.replace(Comm.CR, "").replace(Comm.LF, "");
+				list.add(EntityBuilder.getAccountsFromStringArrayPasswordEncrypt(line.split(Comm.ACCOUNTS_LINK_SEPARATOR)));
 			}
 			getDaoSession().getAccountsDao().saveInTx(list);
+			new ArrayList<String>();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

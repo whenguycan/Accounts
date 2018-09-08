@@ -29,6 +29,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         public final static Property Password = new Property(4, String.class, "password", false, "PASSWORD");
         public final static Property Remarks = new Property(5, String.class, "remarks", false, "REMARKS");
         public final static Property OnUse = new Property(6, int.class, "onUse", false, "ON_USE");
+        public final static Property CreateTime = new Property(7, long.class, "createTime", false, "CREATE_TIME");
+        public final static Property UpdateTime = new Property(8, long.class, "updateTime", false, "UPDATE_TIME");
     }
 
 
@@ -50,7 +52,9 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
                 "\"USERNAME\" TEXT," + // 3: username
                 "\"PASSWORD\" TEXT," + // 4: password
                 "\"REMARKS\" TEXT," + // 5: remarks
-                "\"ON_USE\" INTEGER NOT NULL );"); // 6: onUse
+                "\"ON_USE\" INTEGER NOT NULL ," + // 6: onUse
+                "\"CREATE_TIME\" INTEGER NOT NULL ," + // 7: createTime
+                "\"UPDATE_TIME\" INTEGER NOT NULL );"); // 8: updateTime
     }
 
     /** Drops the underlying database table. */
@@ -93,6 +97,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
             stmt.bindString(6, remarks);
         }
         stmt.bindLong(7, entity.getOnUse());
+        stmt.bindLong(8, entity.getCreateTime());
+        stmt.bindLong(9, entity.getUpdateTime());
     }
 
     @Override
@@ -129,6 +135,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
             stmt.bindString(6, remarks);
         }
         stmt.bindLong(7, entity.getOnUse());
+        stmt.bindLong(8, entity.getCreateTime());
+        stmt.bindLong(9, entity.getUpdateTime());
     }
 
     @Override
@@ -145,7 +153,9 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // username
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // password
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // remarks
-            cursor.getInt(offset + 6) // onUse
+            cursor.getInt(offset + 6), // onUse
+            cursor.getLong(offset + 7), // createTime
+            cursor.getLong(offset + 8) // updateTime
         );
         return entity;
     }
@@ -159,6 +169,8 @@ public class AccountsDao extends AbstractDao<Accounts, Long> {
         entity.setPassword(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setRemarks(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setOnUse(cursor.getInt(offset + 6));
+        entity.setCreateTime(cursor.getLong(offset + 7));
+        entity.setUpdateTime(cursor.getLong(offset + 8));
      }
     
     @Override

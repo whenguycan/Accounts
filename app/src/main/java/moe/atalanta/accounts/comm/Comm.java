@@ -12,7 +12,8 @@ public class Comm {
 
 	public static final String BUNDLE_KEY_DATA = "data";
 
-	public static final String CRLF = "\r\n";
+	public static final String CR = "\r";
+	public static final String LF = "\n";
 
 	public static final String ACCOUNTS_LINK_SEPARATOR = "=";
 

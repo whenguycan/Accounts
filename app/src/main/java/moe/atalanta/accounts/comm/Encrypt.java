@@ -23,6 +23,8 @@ public class Encrypt {
 	private static final int ENCRYPT_KEY_LEN = 128;
 	private static final String CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
 
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
 	/**
 	 * byte数组转16进制字符串
 	 *
@@ -79,7 +81,7 @@ public class Encrypt {
 	 * @return
 	 */
 	private static String encrypt(String password, String secretKey) {
-		byte[] passwordBytes = password.getBytes(Charset.defaultCharset());
+		byte[] passwordBytes = password.getBytes(DEFAULT_CHARSET);
 		byte[] secretKeyBytes = hex2Bytes(secretKey);
 		try {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -106,7 +108,7 @@ public class Encrypt {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secretKeyBytes, ENCRYPT_ALGORITHM));
 			byte[] passwordBytes = cipher.doFinal(encryptedPasswordBytes);
-			return new String(passwordBytes, Charset.defaultCharset());
+			return new String(passwordBytes, DEFAULT_CHARSET);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,7 +151,7 @@ public class Encrypt {
 	public static String md5(String text) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(text.getBytes(Charset.defaultCharset()));
+			md.update(text.getBytes(DEFAULT_CHARSET));
 			byte[] bytes = md.digest();
 			return bytes2Hex(bytes);
 		} catch (Exception e) {
@@ -172,7 +174,7 @@ public class Encrypt {
 				for (String regex : ignore) {
 					line = line.replaceAll(regex, "");
 				}
-				md.update(line.getBytes(Charset.defaultCharset()));
+				md.update(line.getBytes(DEFAULT_CHARSET));
 			}
 			reader.close();
 			return bytes2Hex(md.digest());

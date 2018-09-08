@@ -75,6 +75,9 @@ public class AccountsEditActivity extends BaseActivity {
 								a.setUsername(etUser.getText().toString());
 								a.setPassword(Encrypt.encrypt(etPass.getText().toString()));
 								a.setRemarks(etRemarks.getText().toString());
+								a.setUpdateTime(System.currentTimeMillis());
+								if(a.getCreateTime() == 0)
+									a.setCreateTime(a.getCreateTime());
 								getDaoSession().getAccountsDao().save(a);
 								makeText("保存成功");
 								EventBus.getDefault().post(MessageEvent.AccountsViewActivityFinish);

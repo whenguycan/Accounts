@@ -31,9 +31,14 @@ public class Accounts implements Serializable {
 
     private int onUse;
 
-    @Generated(hash = 1624730308)
+    private long createTime;
+
+    private long updateTime;
+
+    @Generated(hash = 1107583496)
     public Accounts(Long id, String domain, String label, String username,
-            String password, String remarks, int onUse) {
+            String password, String remarks, int onUse, long createTime,
+            long updateTime) {
         this.id = id;
         this.domain = domain;
         this.label = label;
@@ -41,6 +46,8 @@ public class Accounts implements Serializable {
         this.password = password;
         this.remarks = remarks;
         this.onUse = onUse;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
     }
 
     @Generated(hash = 1756363702)
@@ -101,6 +108,22 @@ public class Accounts implements Serializable {
 
     public void setOnUse(int onUse) {
         this.onUse = onUse;
+    }
+
+    public long getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 
 }

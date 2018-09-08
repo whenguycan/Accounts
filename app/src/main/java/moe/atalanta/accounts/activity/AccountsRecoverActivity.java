@@ -11,12 +11,7 @@ import android.widget.ListView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,12 +20,10 @@ import java.util.List;
 import moe.atalanta.accounts.R;
 import moe.atalanta.accounts.comm.BaseActivity;
 import moe.atalanta.accounts.comm.Comm;
-import moe.atalanta.accounts.comm.Encrypt;
 import moe.atalanta.accounts.comm.MessageEvent;
-import moe.atalanta.accounts.comm.StringUtils;
+import moe.atalanta.accounts.comm.ObjectSerializer;
 import moe.atalanta.accounts.entity.Accounts;
 import moe.atalanta.accounts.entity.AccountsDao;
-import moe.atalanta.accounts.entity.EntityBuilder;
 
 public class AccountsRecoverActivity extends BaseActivity {
 
@@ -97,19 +90,17 @@ public class AccountsRecoverActivity extends BaseActivity {
 		String sql = "update " + getDaoSession().getAccountsDao().getTablename() + " set " + AccountsDao.Properties.OnUse.columnName + " = " + Accounts.ON_USE_NO;
 		getDaoSession().getAccountsDao().getDatabase().execSQL(sql);
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-			List<Accounts> list = new ArrayList<>();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if(StringUtils.isNotBlank(line)){
-					String x = Encrypt.decrypt(line.replace(Comm.CRLF, ""));
-					list.add(EntityBuilder.getAccountsFromStringArray(x.split(Comm.ACCOUNTS_LINK_SEPARATOR)));
+			Object o = ObjectSerializer.read(file);
+			if(o instanceof List){
+				List<Accounts> list = (List<Accounts>) o;
+				for(Accounts a : list){
+					a.setId(null);
 				}
+				getDaoSession().getAccountsDao().saveInTx(list);
+			}else{
+				Log.e(TAG, "recover: deserialize filed, object is not list");
 			}
-			getDaoSession().getAccountsDao().saveInTx(list);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
